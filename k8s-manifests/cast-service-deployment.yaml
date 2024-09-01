@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: cast-service
-        image: surabhiharsha5/cast-service:16
+        image: surabhiharsha5/cast-service:18
         command: ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
         ports:
         - containerPort: 8000
@@ -50,7 +50,7 @@ spec:
 #     spec:
 #       containers:
 #         - name: cast-service
-#           image: surabhiharsha5/cast-service:16
+#           image: surabhiharsha5/cast-service:18
 #           command: ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
 #           env:
 #             - name: DATABASE_URI
