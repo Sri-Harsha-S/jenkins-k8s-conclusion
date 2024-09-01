@@ -1,39 +1,80 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: movie-service
+# spec:
+#   selector:
+#     matchLabels:
+#       app: movie-service
+#   replicas: 1
+#   template:
+#     metadata:
+#       labels:
+#         app: movie-service
+#     spec:
+#       containers:
+#         - name: movie-service
+#           image: surabhiharsha5/movie-service:32
+#           command: ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+#           env:
+#             - name: DATABASE_URI
+#               value: postgresql://movie_db_username:movie_db_password@movie-db/movie_db_dev
+#             - name: CAST_SERVICE_HOST_URL
+#               value: http://cast-service:8000/api/v1/casts/
+#           volumeMounts:
+#             - name: app-volume
+#               mountPath: /app
+#       volumes:
+#         - name: app-volume
+#           emptyDir: {}
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: movie-service
+# spec:
+#   ports:
+#     - port: 8000
+#   selector:
+#     app: movie-service
+
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: movie-service
+  namespace: jenkins-task
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: movie-service
-  replicas: 1
   template:
     metadata:
       labels:
         app: movie-service
     spec:
       containers:
-        - name: movie-service
-          image: surabhiharsha5/movie-service:32
-          command: ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
-          env:
-            - name: DATABASE_URI
-              value: postgresql://movie_db_username:movie_db_password@movie-db/movie_db_dev
-            - name: CAST_SERVICE_HOST_URL
-              value: http://cast-service:8000/api/v1/casts/
-          volumeMounts:
-            - name: app-volume
-              mountPath: /app
-      volumes:
-        - name: app-volume
-          emptyDir: {}
+      - name: movie-service
+        image: surabhiharsha5/movie-service:32
+        command: ["uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URI
+          value: "postgresql://movie_db_username:movie_db_password@movie-db-service/movie_db_dev"
+        - name: CAST_SERVICE_HOST_URL
+          value: "http://cast-service:8000/api/v1/casts/"
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: movie-service
 spec:
-  ports:
-    - port: 8000
   selector:
     app: movie-service
+  ports:
+  - protocol: TCP
+    port: 8002
+    targetPort: 8000

@@ -1,41 +1,88 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: movie-db
+# spec:
+#   selector:
+#     matchLabels:
+#       app: movie-db
+#   replicas: 1
+#   template:
+#     metadata:
+#       labels:
+#         app: movie-db
+#     spec:
+#       containers:
+#         - name: movie-db
+#           image: postgres:12.1-alpine
+#           env:
+#             - name: POSTGRES_USER
+#               value: movie_db_username
+#             - name: POSTGRES_PASSWORD
+#               value: movie_db_password
+#             - name: POSTGRES_DB
+#               value: movie_db_dev
+#           volumeMounts:
+#             - name: postgres-storage
+#               mountPath: /var/lib/postgresql/data
+#       volumes:
+#         - name: postgres-storage
+#           persistentVolumeClaim:
+#             claimName: postgres-data-movie
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: movie-db
+# spec:
+#   ports:
+#     - port: 5432
+#   selector:
+#     app: movie-db
+
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: movie-db
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: movie-db
-  replicas: 1
   template:
     metadata:
       labels:
         app: movie-db
     spec:
       containers:
-        - name: movie-db
-          image: postgres:12.1-alpine
-          env:
-            - name: POSTGRES_USER
-              value: movie_db_username
-            - name: POSTGRES_PASSWORD
-              value: movie_db_password
-            - name: POSTGRES_DB
-              value: movie_db_dev
-          volumeMounts:
-            - name: postgres-storage
-              mountPath: /var/lib/postgresql/data
-      volumes:
+      - name: postgres
+        image: postgres:12.1-alpine
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          value: "movie_db_username"
+        - name: POSTGRES_PASSWORD
+          value: "movie_db_password"
+        - name: POSTGRES_DB
+          value: "movie_db_dev"
+        volumeMounts:
         - name: postgres-storage
-          persistentVolumeClaim:
-            claimName: postgres-data-movie
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: postgres-storage
+        persistentVolumeClaim:
+          claimName: postgres-data-movie
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: movie-db
+  name: movie-db-service
 spec:
-  ports:
-    - port: 5432
   selector:
     app: movie-db
+  ports:
+  - protocol: TCP
+    port: 5432
+    targetPort: 5432

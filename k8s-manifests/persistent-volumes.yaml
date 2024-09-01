@@ -1,45 +1,69 @@
-# apiVersion: v1
-# kind: PersistentVolume
-# metadata:
-#   name: movie-db-pv
-# spec:
-#   capacity:
-#     storage: 1Gi
-#   accessModes:
-#     - ReadWriteOnce
-#   hostPath:
-#     path: /data/movie-db  # Adjust path as needed
+# # apiVersion: v1
+# # kind: PersistentVolume
+# # metadata:
+# #   name: movie-db-pv
+# # spec:
+# #   capacity:
+# #     storage: 1Gi
+# #   accessModes:
+# #     - ReadWriteOnce
+# #   hostPath:
+# #     path: /data/movie-db  # Adjust path as needed
 
-# ---
+# # ---
+# # apiVersion: v1
+# # kind: PersistentVolumeClaim
+# # metadata:
+# #   name: movie-db-pvc
+# # spec:
+# #   accessModes:
+# #     - ReadWriteOnce
+# #   resources:
+# #     requests:
+# #       storage: 1Gi
+      
+# # ---
+# # apiVersion: v1
+# # kind: PersistentVolume
+# # metadata:
+# #   name: cast-db-pv
+# # spec:
+# #   capacity:
+# #     storage: 1Gi
+# #   accessModes:
+# #     - ReadWriteOnce
+# #   hostPath:
+# #     path: /data/cast-db  # Adjust path as needed
+
+# # ---
+# # apiVersion: v1
+# # kind: PersistentVolumeClaim
+# # metadata:
+# #   name: cast-db-pvc
+# # spec:
+# #   accessModes:
+# #     - ReadWriteOnce
+# #   resources:
+# #     requests:
+# #       storage: 1Gi
+
 # apiVersion: v1
 # kind: PersistentVolumeClaim
 # metadata:
-#   name: movie-db-pvc
+#   name: postgres-data-movie
 # spec:
 #   accessModes:
 #     - ReadWriteOnce
 #   resources:
 #     requests:
 #       storage: 1Gi
-      
-# ---
-# apiVersion: v1
-# kind: PersistentVolume
-# metadata:
-#   name: cast-db-pv
-# spec:
-#   capacity:
-#     storage: 1Gi
-#   accessModes:
-#     - ReadWriteOnce
-#   hostPath:
-#     path: /data/cast-db  # Adjust path as needed
 
 # ---
+
 # apiVersion: v1
 # kind: PersistentVolumeClaim
 # metadata:
-#   name: cast-db-pvc
+#   name: postgres-data-cast
 # spec:
 #   accessModes:
 #     - ReadWriteOnce
@@ -59,7 +83,6 @@ spec:
       storage: 1Gi
 
 ---
-
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -70,3 +93,4 @@ spec:
   resources:
     requests:
       storage: 1Gi
+

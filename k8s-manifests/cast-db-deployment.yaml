@@ -1,41 +1,86 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: cast-db
+# spec:
+#   selector:
+#     matchLabels:
+#       app: cast-db
+#   replicas: 1
+#   template:
+#     metadata:
+#       labels:
+#         app: cast-db
+#     spec:
+#       containers:
+#         - name: cast-db
+#           image: postgres:12.1-alpine
+#           env:
+#             - name: POSTGRES_USER
+#               value: cast_db_username
+#             - name: POSTGRES_PASSWORD
+#               value: cast_db_password
+#             - name: POSTGRES_DB
+#               value: cast_db_dev
+#           volumeMounts:
+#             - name: postgres-storage
+#               mountPath: /var/lib/postgresql/data
+#       volumes:
+#         - name: postgres-storage
+#           persistentVolumeClaim:
+#             claimName: postgres-data-cast
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: cast-db
+# spec:
+#   ports:
+#     - port: 5432
+#   selector:
+#     app: cast-db
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cast-db
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: cast-db
-  replicas: 1
   template:
     metadata:
       labels:
         app: cast-db
     spec:
       containers:
-        - name: cast-db
-          image: postgres:12.1-alpine
-          env:
-            - name: POSTGRES_USER
-              value: cast_db_username
-            - name: POSTGRES_PASSWORD
-              value: cast_db_password
-            - name: POSTGRES_DB
-              value: cast_db_dev
-          volumeMounts:
-            - name: postgres-storage
-              mountPath: /var/lib/postgresql/data
-      volumes:
+      - name: postgres
+        image: postgres:12.1-alpine
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          value: "cast_db_username"
+        - name: POSTGRES_PASSWORD
+          value: "cast_db_password"
+        - name: POSTGRES_DB
+          value: "cast_db_dev"
+        volumeMounts:
         - name: postgres-storage
-          persistentVolumeClaim:
-            claimName: postgres-data-cast
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: postgres-storage
+        persistentVolumeClaim:
+          claimName: postgres-data-cast
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: cast-db
+  name: cast-db-service
 spec:
-  ports:
-    - port: 5432
   selector:
     app: cast-db
+  ports:
+  - protocol: TCP
+    port: 5432
+    targetPort: 5432
