@@ -43,7 +43,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: movie-service
-  namespace: jenkins-task
 spec:
   replicas: 1
   selector:
